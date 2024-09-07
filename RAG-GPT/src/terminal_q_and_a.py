@@ -5,8 +5,8 @@ To execute the code, after preparing the python environment and the vector datab
 
 python src\terminal_q_and_a.py
 """
-
-import openai
+import os
+from openai import OpenAI
 import yaml
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
@@ -14,7 +14,13 @@ from typing import List, Tuple
 from utils.load_config import LoadConfig
 
 # For loading openai credentials
+client = OpenAI(
+    # This is the default and can be omitted
+    api_key=os.environ.get("OPENAI_API_KEY"),
+)
+
 APPCFG = LoadConfig()
+
 
 with open("configs/app_config.yml") as cfg:
     app_config = yaml.load(cfg, Loader=yaml.FullLoader)
@@ -38,11 +44,13 @@ while True:
         str(x.page_content)+"\n\n" for x in docs]
     retrived_docs_str = "# Retrieved content:\n\n" + str(retrieved_docs_page_content)
     prompt = retrived_docs_str + "\n\n" + question
-    response = openai.ChatCompletion.create(
-        engine=APPCFG.llm_engine,
+    response = client.chat.completions.create(
+        model=APPCFG.llm_engine,
         messages=[
             {"role": "system", "content": APPCFG.llm_system_role},
             {"role": "user", "content": prompt}
         ]
     )
-    print(response['choices'][0]['message']['content'])
+    print(response)
+    # print(response['choices'][0]['message']['content'])
+    print(response.choices[0].message.content)
