@@ -1,13 +1,19 @@
 import gradio as gr
 import time
-import openai
+from openai import OpenAI
 import os
 from langchain.vectorstores import Chroma
 from typing import List, Tuple
 import re
 import ast
 import html
-from utils.load_config import LoadConfig
+from src.utils.load_config import LoadConfig
+
+
+client = OpenAI(
+    # This is the default and can be omitted
+    api_key=os.environ.get("OPENAI_API_KEY"),
+)
 
 APPCFG = LoadConfig()
 URL = "https://github.com/Farzad-R/LLM-Zero-to-Hundred/tree/master/RAG-GPT"
@@ -63,8 +69,8 @@ class ChatBot:
         prompt = f"{chat_history}{retrieved_content}{question}"
         print("========================")
         print(prompt)
-        response = openai.ChatCompletion.create(
-            engine=APPCFG.llm_engine,
+        response = client.chat.completions.create(
+            model=APPCFG.llm_engine,
             messages=[
                 {"role": "system", "content": APPCFG.llm_system_role},
                 {"role": "user", "content": prompt}
