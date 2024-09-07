@@ -4,6 +4,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 import os
 from typing import List
 from langchain.embeddings.openai import OpenAIEmbeddings
+# from langchain_openai import OpenAIEmbeddings
 
 
 class PrepareVectorDB:
