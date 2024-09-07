@@ -21,10 +21,14 @@
     Note: The docstring provides an overview of the module's purpose and functionality, but detailed comments within the code
     explain specific components, interactions, and logic throughout the implementation.
 """
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import gradio as gr
-from utils.upload_file import UploadFile
-from utils.chatbot import ChatBot
-from utils.ui_settings import UISettings
+from src.utils.upload_file import UploadFile
+from src.utils.chatbot import ChatBot
+from src.utils.ui_settings import UISettings
 
 
 with gr.Blocks() as demo:
