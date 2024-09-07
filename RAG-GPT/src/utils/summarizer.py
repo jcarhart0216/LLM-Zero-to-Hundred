@@ -1,7 +1,14 @@
 
-from langchain.document_loaders import PyPDFLoader
-from utils.utilities import count_num_tokens
-import openai
+# from langchain.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
+from src.utils.utilities import count_num_tokens
+from openai import OpenAI
+import os
+
+client = OpenAI(
+    # This is the default and can be omitted
+    api_key=os.environ.get("OPENAI_API_KEY"),
+)
 
 
 class Summarizer:
@@ -107,8 +114,8 @@ class Summarizer:
         Returns:
             str: The response content from the ChatGPT engine.
         """
-        response = openai.ChatCompletion.create(
-            engine=gpt_model,
+        response = client.chat.completions.create(
+            model=gpt_model,
             messages=[
                 {"role": "system", "content": llm_system_role},
                 {"role": "user", "content": prompt}
