@@ -84,12 +84,11 @@ class ChatBot:
             temperature=temperature,
             # stream=False
         )
-        print(response)
-        print(response.choices[0].message.content)
+        # print(response)
+        # print(response.choices[0].message.content)
         # print(response['choices'][0]['message']['content'])
         chatbot.append(
             # message, response.choices[0].message.content)
-
             (message, response.choices[0].message.content))
             # (message, response["choices"][0]["message"]["content"]))
 
