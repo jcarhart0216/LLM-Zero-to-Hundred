@@ -8,10 +8,14 @@ python src\terminal_q_and_a.py
 import os
 from openai import OpenAI
 import yaml
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
+from langchain_community.embeddings.openai import OpenAIEmbeddings
+# from langchain.vectorstores import Chroma
+from langchain_chroma import Chroma
 from typing import List, Tuple
 from utils.load_config import LoadConfig
+from dotenv import load_dotenv
+
+load_dotenv()  # This will load the .env file
 
 # For loading openai credentials
 client = OpenAI(
@@ -54,3 +58,4 @@ while True:
     print(response)
     # print(response['choices'][0]['message']['content'])
     print(response.choices[0].message.content)
+
