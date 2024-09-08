@@ -10,13 +10,15 @@ import html
 from src.utils.load_config import LoadConfig
 from dotenv import load_dotenv
 
+os.makedirs('/Users/jcarhart/Desktop/code_personal_use/LLM-Zero-to-Hundred/RAG-GPT/data/vectordb/uploaded/chroma', exist_ok=True)
+
 load_dotenv()  # This will load the .env file
 
 
-client = OpenAI(
-    # This is the default and can be omitted
-    api_key=os.environ.get("OPENAI_API_KEY"),
-)
+client = OpenAI()
+#     # This is the default and can be omitted
+#     api_key=os.environ.get("OPENAI_API_KEY"),
+# )
 
 APPCFG = LoadConfig()
 URL = "https://github.com/Farzad-R/LLM-Zero-to-Hundred/tree/master/RAG-GPT"
@@ -104,6 +106,19 @@ class ChatBot:
         markdown_documents = ""
         counter = 1
         for doc in documents:
+            print(f"Document {counter} content before regex:\n", doc)  # Add this line to print the content
+
+            # Try matching the content and metadata
+            match = re.match(r"page_content=(.*?)( metadata=\{.*\})", doc)
+            if match:
+                content, metadata = match.groups()
+            else:
+                print(f"No match found for Document {counter}!")  # This will help identify if regex is failing
+                continue
+
+            metadata = metadata.split('=', 1)[1]
+            metadata_dict = ast.literal_eval(metadata)
+
             # Extract content and metadata
             content, metadata = re.match(
                 r"page_content=(.*?)( metadata=\{.*\})", doc).groups()
