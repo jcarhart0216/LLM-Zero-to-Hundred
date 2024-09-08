@@ -9,19 +9,20 @@ import os
 from openai import OpenAI
 import yaml
 from langchain_community.embeddings.openai import OpenAIEmbeddings
-# from langchain.vectorstores import Chroma
-from langchain_chroma import Chroma
+from langchain_community.vectorstores import Chroma
+# from langchain_chroma import Chroma
 from typing import List, Tuple
 from utils.load_config import LoadConfig
 from dotenv import load_dotenv
 
 load_dotenv()  # This will load the .env file
 
+
 # For loading openai credentials
-client = OpenAI(
-    # This is the default and can be omitted
-    api_key=os.environ.get("OPENAI_API_KEY"),
-)
+client = OpenAI()
+#     # This is the default and can be omitted
+#     api_key=os.environ.get("OPENAI_API_KEY"),
+# )
 
 APPCFG = LoadConfig()
 
