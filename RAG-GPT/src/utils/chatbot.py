@@ -2,12 +2,15 @@ import gradio as gr
 import time
 from openai import OpenAI
 import os
-from langchain.vectorstores import Chroma
+from langchain_community.vectorstores import Chroma
 from typing import List, Tuple
 import re
 import ast
 import html
 from src.utils.load_config import LoadConfig
+from dotenv import load_dotenv
+
+load_dotenv()  # This will load the .env file
 
 
 client = OpenAI(
@@ -80,6 +83,7 @@ class ChatBot:
         )
         chatbot.append(
             (message, response["choices"][0]["message"]["content"]))
+
         time.sleep(2)
 
         return "", chatbot, retrieved_content
