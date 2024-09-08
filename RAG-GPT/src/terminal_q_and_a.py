@@ -6,13 +6,15 @@ To execute the code, after preparing the python environment and the vector datab
 python src\terminal_q_and_a.py
 """
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from openai import OpenAI
 import yaml
 from langchain_community.embeddings.openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 # from langchain_chroma import Chroma
 from typing import List, Tuple
-from utils.load_config import LoadConfig
+from src.utils.load_config import LoadConfig
 from dotenv import load_dotenv
 
 load_dotenv()  # This will load the .env file
