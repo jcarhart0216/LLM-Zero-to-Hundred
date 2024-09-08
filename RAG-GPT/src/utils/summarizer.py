@@ -5,10 +5,10 @@ from src.utils.utilities import count_num_tokens
 from openai import OpenAI
 import os
 
-client = OpenAI(
+client = OpenAI()
     # This is the default and can be omitted
-    api_key=os.environ.get("OPENAI_API_KEY"),
-)
+#     api_key=os.environ.get("OPENAI_API_KEY"),
+# )
 
 
 class Summarizer:
