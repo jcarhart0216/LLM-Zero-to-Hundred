@@ -1,7 +1,9 @@
 
 import os
-from utils.prepare_vectordb import PrepareVectorDB
-from utils.load_config import LoadConfig
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from src.utils.prepare_vectordb import PrepareVectorDB
+from src.utils.load_config import LoadConfig
 CONFIG = LoadConfig()
 
 
