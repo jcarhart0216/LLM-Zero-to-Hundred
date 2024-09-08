@@ -74,6 +74,7 @@ class ChatBot:
         prompt = f"{chat_history}{retrieved_content}{question}"
         print("========================")
         print(prompt)
+
         response = client.chat.completions.create(
             model=APPCFG.llm_engine,
             messages=[
@@ -83,8 +84,12 @@ class ChatBot:
             temperature=temperature,
             # stream=False
         )
+        print(response)
+        # print(response.choices[0].message.content)
+        print(response['choices'][0]['message']['content'])
         chatbot.append(
             (message, response["choices"][0]["message"]["content"]))
+
 
         time.sleep(2)
 
