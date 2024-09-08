@@ -3,7 +3,7 @@ import openai
 import os
 from dotenv import load_dotenv
 import yaml
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_community.embeddings.openai import OpenAIEmbeddings
 from pyprojroot import here
 import shutil
 
