@@ -7,6 +7,8 @@ from typing import List
 from langchain_community.embeddings.openai import OpenAIEmbeddings
 # from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv
+os.makedirs('/Users/jcarhart/Desktop/code_personal_use/LLM-Zero-to-Hundred/RAG-GPT/data/vectordb/uploaded/chroma', exist_ok=True)
+
 
 load_dotenv()  # This will load the .env file
 
