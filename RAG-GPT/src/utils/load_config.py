@@ -70,7 +70,7 @@ class LoadConfig:
         self.llm_engine = app_config["llm_config"]["engine"]
         self.llm_system_role = app_config["llm_config"]["llm_system_role"]
         self.persist_directory = str(here(
-            app_config["directories"]["persist_directory"]))  # needs to be strin for summation in chromadb backend: self._settings.require("persist_directory") + "/chroma.sqlite3"
+            app_config["directories"]["persist_directory"]))  # needs to be string for summation in chromadb backend: self._settings.require("persist_directory") + "/chroma.sqlite3"
         self.custom_persist_directory = str(here(
             app_config["directories"]["custom_persist_directory"]))
         self.embedding_model = OpenAIEmbeddings()
