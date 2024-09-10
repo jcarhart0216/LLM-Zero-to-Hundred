@@ -1,15 +1,16 @@
 from langchain_community.vectorstores import Chroma
 # from langchain_chroma import Chroma
 from langchain_community.document_loaders import PyPDFLoader
+# import fitz  # PyMuPDF
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import os
 from typing import List
-from langchain_community.embeddings.openai import OpenAIEmbeddings
-# from langchain_openai import OpenAIEmbeddings
+# from langchain_community.embeddings.openai import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv
-os.makedirs('/Users/jcarhart/Desktop/code_personal_use/LLM-Zero-to-Hundred/RAG-GPT/data/vectordb/uploaded/chroma', exist_ok=True)
+from pypdf.errors import PdfStreamError  # Import the error to handle corrupted PDFs
 
-
+# os.makedirs('/Users/jcarhart/Desktop/code_personal_use/LLM-Zero-to-Hundred/RAG-GPT/data/vectordb/uploaded/chroma', exist_ok=True)
 load_dotenv()  # This will load the .env file
 
 
@@ -67,22 +68,35 @@ class PrepareVectorDB:
             List: A list of loaded documents.
         """
         doc_counter = 0
+        docs = []
         if isinstance(self.data_directory, list):
             print("Loading the uploaded documents...")
-            docs = []
             for doc_dir in self.data_directory:
-                docs.extend(PyPDFLoader(doc_dir).load())
-                doc_counter += 1
+                try:
+                    loaded_docs = PyPDFLoader(doc_dir).load()
+                    docs.extend(loaded_docs)
+                    doc_counter += 1
+                except PdfStreamError as e:
+                    print(f"Error loading PDF from {doc_dir}: {e}")
+                except Exception as e:
+                    print(f"Unexpected error loading PDF from {doc_dir}: {e}")
+
             print("Number of loaded documents:", doc_counter)
             print("Number of pages:", len(docs), "\n\n")
         else:
             print("Loading documents manually...")
             document_list = os.listdir(self.data_directory)
-            docs = []
             for doc_name in document_list:
-                docs.extend(PyPDFLoader(os.path.join(
-                    self.data_directory, doc_name)).load())
-                doc_counter += 1
+                doc_path = os.path.join(self.data_directory, doc_name)
+                try:
+                    loaded_docs = PyPDFLoader(doc_path).load()
+                    docs.extend(loaded_docs)
+                    doc_counter += 1
+                except PdfStreamError as e:
+                    print(f"Error loading PDF {doc_name}: {e}")
+                except Exception as e:
+                    print(f"Unexpected error loading PDF {doc_name}: {e}")
+
             print("Number of loaded documents:", doc_counter)
             print("Number of pages:", len(docs), "\n\n")
 
