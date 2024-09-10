@@ -3,12 +3,12 @@ import openai
 import os
 from dotenv import load_dotenv
 import yaml
-from langchain_community.embeddings.openai import OpenAIEmbeddings
+# from langchain_community.embeddings.openai import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from pyprojroot import here
 import shutil
 
 load_dotenv()
-
 
 class LoadConfig:
     """
@@ -113,10 +113,15 @@ class LoadConfig:
         Replace "Your API TYPE," "Your API BASE," "Your API VERSION," and "Your API KEY" with your actual
         OpenAI API credentials.
         """
-        openai.api_type = os.getenv("OPENAI_API_TYPE")
-        openai.api_base = os.getenv("OPENAI_API_BASE")
-        openai.api_version = os.getenv("OPENAI_API_VERSION")
-        openai.api_key = os.getenv("OPENAI_API_KEY")
+        # openai.api_type = os.getenv("OPENAI_API_TYPE")
+        # openai.api_base = os.getenv("OPENAI_API_BASE")
+        # openai.api_version = os.getenv("OPENAI_API_VERSION")
+        # openai.api_key = os.getenv("OPENAI_API_KEY")
+
+        os.environ["OPENAI_API_TYPE"] = os.environ["OPENAI_API_TYPE"]
+        os.environ["OPENAI_API_BASE"] = os.environ["OPENAI_API_BASE"]
+        os.environ["OPENAI_API_VERSION"] = os.environ["OPENAI_API_VERSION"]
+        os.environ["OPENAI_API_KEY"] = os.environ["OPENAI_API_KEY"]
 
     def create_directory(self, directory_path: str):
         """
