@@ -36,7 +36,8 @@ summarizer_config:
 
 
 splitter_config:
-  chunk_size: 1500    # adjusting this value affects batch size during the embedding step. Higher values equal fewer chunks and lower values equal more chunks
+  # adjusting this value affects batch size during the embedding step. Higher values equal fewer chunks and lower values equal more chunks
+  chunk_size: 3000
   chunk_overlap: 500
 
 retrieval_config:
