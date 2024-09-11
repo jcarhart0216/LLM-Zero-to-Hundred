@@ -10,8 +10,10 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from openai import OpenAI
 import yaml
-from langchain_community.embeddings.openai import OpenAIEmbeddings
-from langchain_community.vectorstores import Chroma
+# from langchain_community.embeddings.openai import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
+# from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 # from langchain_chroma import Chroma
 from typing import List, Tuple
 from src.utils.load_config import LoadConfig
@@ -39,6 +41,7 @@ vectordb = Chroma(persist_directory=APPCFG.persist_directory,
                   embedding_function=embedding)
 
 print("Number of vectors in vectordb:", vectordb._collection.count())
+print("Here are the vectors in vectordb:", vectordb._collection)
 
 # Prepare the RAG with openai in terminal
 while True:
