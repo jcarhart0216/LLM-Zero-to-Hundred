@@ -23,18 +23,18 @@
 """
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-os.makedirs('/Users/jcarhart/Desktop/code_personal_use/LLM-Zero-to-Hundred/RAG-GPT/data/vectordb/uploaded/chroma', exist_ok=True)
+# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# os.makedirs('/Users/jcarhart/Desktop/code_personal_use/LLM-Zero-to-Hundred/RAG-GPT/data/vectordb/uploaded/chroma', exist_ok=True)
 
 import gradio as gr
-from src.utils.upload_file import UploadFile
-from src.utils.chatbot import ChatBot
-from src.utils.ui_settings import UISettings
+from utils.upload_file import UploadFile
+from utils.chatbot import ChatBot
+from utils.ui_settings import UISettings
 
 
 with gr.Blocks() as demo:
     with gr.Tabs():
-        with gr.TabItem("RAG-GPT"):
+        with gr.TabItem("You Friendly Neighborhood RAG-GPT Chatbot"):
             ##############
             # First ROW:
             ##############
