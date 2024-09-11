@@ -2,18 +2,17 @@ import gradio as gr
 import time
 from openai import OpenAI
 import os
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from typing import List, Tuple
 import re
 import ast
 import html
-from src.utils.load_config import LoadConfig
+from utils.load_config import LoadConfig
 from dotenv import load_dotenv
 
-os.makedirs('/Users/jcarhart/Desktop/code_personal_use/LLM-Zero-to-Hundred/RAG-GPT/data/vectordb/uploaded/chroma', exist_ok=True)
+# os.makedirs('/Users/jcarhart/Desktop/code_personal_use/LLM-Zero-to-Hundred/RAG-GPT/data/vectordb/uploaded/chroma', exist_ok=True)
 
 load_dotenv()  # This will load the .env file
-
 
 client = OpenAI()
 #     # This is the default and can be omitted
@@ -51,6 +50,7 @@ class ChatBot:
             if os.path.exists(APPCFG.persist_directory):
                 vectordb = Chroma(persist_directory=APPCFG.persist_directory,
                                   embedding_function=APPCFG.embedding_model)
+                print(f"Number of documents in the vector store: {vectordb._collection.count()}")
             else:
                 chatbot.append(
                     (message, f"VectorDB does not exist. Please first execute the 'upload_data_manually.py' module. For further information please visit {hyperlink}."))
@@ -67,13 +67,20 @@ class ChatBot:
 
         docs = vectordb.similarity_search(message, k=APPCFG.k)
         print(docs)
+
+        docs = vectordb.similarity_search("dummy query", k=APPCFG.k)
+        print("Sample retrieved document content:", docs[0].page_content)
+
         question = "# User new question:\n" + message
         retrieved_content = ChatBot.clean_references(docs)
+
         # Memory: previous two Q&A pairs
         chat_history = f"Chat history:\n {str(chatbot[-APPCFG.number_of_q_a_pairs:])}\n\n"
         prompt = f"{chat_history}{retrieved_content}{question}"
         print("========================")
+        print("Constructed prompt before sending to OpenAI:")
         print(prompt)
+        print("========================")
 
         response = client.chat.completions.create(
             model=APPCFG.llm_engine,
@@ -96,6 +103,7 @@ class ChatBot:
 
         return "", chatbot, retrieved_content
 
+
     @staticmethod
     def clean_references(documents: List) -> str:
         """
@@ -108,62 +116,40 @@ class ChatBot:
             str: A string containing cleaned and formatted references.
         """
         server_url = "http://localhost:8000"
-        documents = [str(x)+"\n\n" for x in documents]
         markdown_documents = ""
         counter = 1
+
+        # Iterate over the Document objects without converting them to strings
         for doc in documents:
-            print(f"Document {counter} content before regex:\n", doc)  # Add this line to print the content
+            print(f"Document {counter} content before cleaning:\n", doc.page_content)  # Access the document content
 
-            # Try matching the content and metadata
-            match = re.match(r"page_content=(.*?)( metadata=\{.*\})", doc)
-            if match:
-                content, metadata = match.groups()
-            else:
-                print(f"No match found for Document {counter}!")  # This will help identify if regex is failing
-                continue
+            # Directly access content and metadata
+            content = doc.page_content
+            metadata = doc.metadata
 
-            metadata = metadata.split('=', 1)[1]
-            metadata_dict = ast.literal_eval(metadata)
-
-            # Extract content and metadata
-            content, metadata = re.match(
-                r"page_content=(.*?)( metadata=\{.*\})", doc).groups()
-            metadata = metadata.split('=', 1)[1]
-            metadata_dict = ast.literal_eval(metadata)
-
-            # Decode newlines and other escape sequences
+            # Clean up the content as needed (e.g., decode escape sequences)
             content = bytes(content, "utf-8").decode("unicode_escape")
-
-            # Replace escaped newlines with actual newlines
             content = re.sub(r'\\n', '\n', content)
-            # Remove special tokens
             content = re.sub(r'\s*<EOS>\s*<pad>\s*', ' ', content)
-            # Remove any remaining multiple spaces
             content = re.sub(r'\s+', ' ', content).strip()
 
             # Decode HTML entities
             content = html.unescape(content)
 
-            # Replace incorrect unicode characters with correct ones
-            content = content.encode('latin1').decode('utf-8', 'ignore')
+            # Prepare the PDF URL using metadata
+            pdf_url = f"{server_url}/{os.path.basename(metadata['source'])}"
 
-            # Remove or replace special characters and mathematical symbols
-            # This step may need to be customized based on the specific symbols in your documents
-            content = re.sub(r'â', '-', content)
-            content = re.sub(r'â', '∈', content)
-            content = re.sub(r'Ã', '×', content)
-            content = re.sub(r'ï¬', 'fi', content)
-            content = re.sub(r'â', '∈', content)
-            content = re.sub(r'Â·', '·', content)
-            content = re.sub(r'ï¬', 'fl', content)
-
-            pdf_url = f"{server_url}/{os.path.basename(metadata_dict['source'])}"
-
-            # Append cleaned content to the markdown string with two newlines between documents
-            markdown_documents += f"# Retrieved content {counter}:\n" + content + "\n\n" + \
-                f"Source: {os.path.basename(metadata_dict['source'])}" + " | " +\
-                f"Page number: {str(metadata_dict['page'])}" + " | " +\
-                f"[View PDF]({pdf_url})" "\n\n"
+            # Format content and metadata into markdown string
+            markdown_documents += (
+                    f"# Retrieved content {counter}:\n"
+                    + content
+                    + "\n\n"
+                    + f"Source: {os.path.basename(metadata['source'])}"
+                    + " | "
+                    + f"Page number: {str(metadata['page'])}"
+                    + " | "
+                    + f"[View PDF]({pdf_url})\n\n"
+            )
             counter += 1
 
         return markdown_documents
