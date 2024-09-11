@@ -1,11 +1,9 @@
-from langchain_community.vectorstores import Chroma
-# from langchain_chroma import Chroma
+from langchain_chroma import Chroma
 from langchain_community.document_loaders import PyPDFLoader
 # import fitz  # PyMuPDF
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import os
 from typing import List
-# from langchain_community.embeddings.openai import OpenAIEmbeddings
 from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv
 from pypdf.errors import PdfStreamError  # Import the error to handle corrupted PDFs
@@ -128,12 +126,14 @@ class PrepareVectorDB:
         docs = self.__load_all_documents()
         chunked_documents = self.__chunk_documents(docs)
         print("Preparing vectordb...")
+
         vectordb = Chroma.from_documents(
             documents=chunked_documents,
             embedding=self.embedding,
             persist_directory=self.persist_directory
         )
         print("VectorDB is created and saved.")
+        print(f"Number of vectors in vectordb: {vectordb._collection.count()}")
         print("Number of vectors in vectordb:",
               vectordb._collection.count(), "\n\n")
         return vectordb
