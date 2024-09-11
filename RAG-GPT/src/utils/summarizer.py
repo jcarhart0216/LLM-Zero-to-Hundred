@@ -1,7 +1,7 @@
 
 # from langchain.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import PyPDFLoader
-from src.utils.utilities import count_num_tokens
+from utils.utilities import count_num_tokens
 from openai import OpenAI
 import os
 
