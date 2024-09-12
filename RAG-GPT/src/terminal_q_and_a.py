@@ -21,7 +21,6 @@ from dotenv import load_dotenv
 
 load_dotenv()  # This will load the .env file
 
-
 # For loading openai credentials
 client = OpenAI()
 #     # This is the default and can be omitted
@@ -50,6 +49,8 @@ while True:
         break
     question = "# user new question:\n" + question
     docs = vectordb.similarity_search(question, k=APPCFG.k)
+    # for x, score in docs:
+    #     print(f"* [SIM={score:3f}] {x.page_content} [{x.metadata}]")
     retrieved_docs_page_content: List[Tuple] = [
         str(x.page_content)+"\n\n" for x in docs]
     retrived_docs_str = "# Retrieved content:\n\n" + str(retrieved_docs_page_content)
