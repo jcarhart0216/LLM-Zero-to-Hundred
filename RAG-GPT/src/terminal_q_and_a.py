@@ -48,13 +48,15 @@ while True:
     if question.lower() =='q':
         break
     question = "# user new question:\n" + question
+
     docs = vectordb.similarity_search(question, k=APPCFG.k)
     # for x, score in docs:
     #     print(f"* [SIM={score:3f}] {x.page_content} [{x.metadata}]")
-    retrieved_docs_page_content: List[Tuple] = [
-        str(x.page_content)+"\n\n" for x in docs]
-    retrived_docs_str = "# Retrieved content:\n\n" + str(retrieved_docs_page_content)
-    prompt = retrived_docs_str + "\n\n" + question
+    retrieved_docs_page_content: List[Tuple] = [str(x.page_content)+"\n\n" for x in docs]
+    retrieved_docs_str = "# Retrieved content:\n\n" + str(retrieved_docs_page_content)
+
+    prompt = retrieved_docs_str + "\n\n" + question
+
     response = client.chat.completions.create(
         model=APPCFG.llm_engine,
         messages=[
