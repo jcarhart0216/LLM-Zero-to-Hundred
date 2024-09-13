@@ -1,3 +1,4 @@
+import shutil
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import PyPDFLoader
 # import fitz  # PyMuPDF
@@ -123,7 +124,18 @@ class PrepareVectorDB:
         Returns:
             Chroma: The created VectorDB.
         """
+
+        # Remove the existing vector database if it exists
+        if os.path.exists(self.persist_directory):
+            print(f"Removing existing vector database at {self.persist_directory}...")
+            shutil.rmtree(self.persist_directory)
+
         docs = self.__load_all_documents()
+
+        print(f"Documents to chunk: {len(docs)}")
+        for doc in docs:
+            print(f"Document content: {doc.page_content[:200]}")  # Print first 200 characters of each doc
+
         chunked_documents = self.__chunk_documents(docs)
         print("Preparing vectordb...")
 
