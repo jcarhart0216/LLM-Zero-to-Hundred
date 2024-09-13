@@ -16,12 +16,12 @@ To employ any of these methods, simply configure the appropriate settings in the
 
 ## RAG-GPT User Interface
 <div align="center">
-  <img src="images/RAGGPT UI.png" alt="RAG-GPT UI">
+  <img src="old/images/RAGGPT UI.png" alt="RAG-GPT UI">
 </div>
 
 ## Project Schema
 <div align="center">
-  <img src="images/RAGGPT_schema.png" alt="Schema">
+  <img src="old/images/RAGGPT_schema.png" alt="Schema">
 </div>
 
 * NOTE: This project is currently set up as a **demo**. As such, the document management is simplified and not suitable for production environments.
