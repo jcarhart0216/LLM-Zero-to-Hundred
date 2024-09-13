@@ -1,9 +1,9 @@
 
 import os
-# import sys
-# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils.prepare_vectordb import PrepareVectorDB
-from utils.load_config import LoadConfig
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from src.utils.prepare_vectordb import PrepareVectorDB
+from src.utils.load_config import LoadConfig
 from dotenv import load_dotenv
 # os.makedirs('/Users/jcarhart/Desktop/code_personal_use/LLM-Zero-to-Hundred/RAG-GPT/data/vectordb/uploaded/chroma', exist_ok=True)
 load_dotenv()
