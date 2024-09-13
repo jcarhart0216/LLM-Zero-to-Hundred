@@ -7,7 +7,7 @@ from typing import List, Tuple
 import re
 import ast
 import html
-from utils.load_config import LoadConfig
+from src.utils.load_config import LoadConfig
 from dotenv import load_dotenv
 
 # os.makedirs('/Users/jcarhart/Desktop/code_personal_use/LLM-Zero-to-Hundred/RAG-GPT/data/vectordb/uploaded/chroma', exist_ok=True)
@@ -31,6 +31,7 @@ class ChatBot:
     This class provides static methods for responding to user queries, handling feedback, and
     cleaning references from retrieved documents.
     """
+
     @staticmethod
     def respond(chatbot: List, message: str, data_type: str = "Preprocessed doc", temperature: float = 0.0) -> Tuple:
         """
@@ -45,43 +46,47 @@ class ChatBot:
         Returns:
             Tuple: A tuple containing an empty string, the updated chat history, and references from retrieved documents.
         """
+
+        # Handle Preprocessed doc case
         if data_type == "Preprocessed doc":
-            # directories
+            # Check if the vector database exists
             if os.path.exists(APPCFG.persist_directory):
                 vectordb = Chroma(persist_directory=APPCFG.persist_directory,
                                   embedding_function=APPCFG.embedding_model)
                 print(f"Number of documents in the vector store: {vectordb._collection.count()}")
             else:
                 chatbot.append(
-                    (message, f"VectorDB does not exist. Please first execute the 'upload_data_manually.py' module. For further information please visit {hyperlink}."))
+                    (message, f"VectorDB does not exist. Please first execute the 'upload_data_manually.py' module."))
                 return "", chatbot, None
 
+        # Handle Upload doc: Process for RAG case
         elif data_type == "Upload doc: Process for RAG":
             if os.path.exists(APPCFG.custom_persist_directory):
                 vectordb = Chroma(persist_directory=APPCFG.custom_persist_directory,
                                   embedding_function=APPCFG.embedding_model)
             else:
                 chatbot.append(
-                    (message, f"No file was uploaded. Please first upload your files using the 'upload' button."))
+                    (message, "No file was uploaded. Please first upload your files using the 'upload' button."))
                 return "", chatbot, None
 
+        # Perform similarity search on the vector database
         docs = vectordb.similarity_search(message, k=APPCFG.k)
-        print(docs)
+        print("Retrieved documents: ", docs)
 
-        docs = vectordb.similarity_search("dummy query", k=APPCFG.k)
-        print("Sample retrieved document content:", docs[0].page_content)
-
+        # Prepare question and chat history
         question = "# User new question:\n" + message
         retrieved_content = ChatBot.clean_references(docs)
 
-        # Memory: previous two Q&A pairs
+        # Build chat history and the full prompt
         chat_history = f"Chat history:\n {str(chatbot[-APPCFG.number_of_q_a_pairs:])}\n\n"
         prompt = f"{chat_history}{retrieved_content}{question}"
+
         print("========================")
         print("Constructed prompt before sending to OpenAI:")
         print(prompt)
         print("========================")
 
+        # Generate the response from OpenAI API
         response = client.chat.completions.create(
             model=APPCFG.llm_engine,
             messages=[
@@ -89,20 +94,13 @@ class ChatBot:
                 {"role": "user", "content": prompt}
             ],
             temperature=temperature,
-            # stream=False
         )
-        # print(response)
-        # print(response.choices[0].message.content)
-        # print(response['choices'][0]['message']['content'])
-        chatbot.append(
-            # message, response.choices[0].message.content)
-            (message, response.choices[0].message.content))
-            # (message, response["choices"][0]["message"]["content"]))
 
-        time.sleep(2)
+        # Append the new message and OpenAI's response to the chat history
+        chatbot.append((message, response.choices[0].message.content))
 
+        # Return the required 3 values: clear input, updated chatbot history, and retrieved content
         return "", chatbot, retrieved_content
-
 
     @staticmethod
     def clean_references(documents: List) -> str:
