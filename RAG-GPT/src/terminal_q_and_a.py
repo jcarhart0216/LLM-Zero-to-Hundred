@@ -19,7 +19,7 @@ from typing import List, Tuple
 from src.utils.load_config import LoadConfig
 from dotenv import load_dotenv
 
-load_dotenv()  # This will load the .env file
+load_dotenv(".env")  # This will load the .env file
 
 # For loading openai credentials
 client = OpenAI()
