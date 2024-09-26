@@ -8,7 +8,7 @@ from langchain_openai import OpenAIEmbeddings
 from pyprojroot import here
 import shutil
 
-load_dotenv()
+load_dotenv(".env")
 
 class LoadConfig:
     """
@@ -118,10 +118,10 @@ class LoadConfig:
         # openai.api_version = os.getenv("OPENAI_API_VERSION")
         # openai.api_key = os.getenv("OPENAI_API_KEY")
 
-        os.environ["OPENAI_API_TYPE"] = os.environ["OPENAI_API_TYPE"]
-        os.environ["OPENAI_API_BASE"] = os.environ["OPENAI_API_BASE"]
-        os.environ["OPENAI_API_VERSION"] = os.environ["OPENAI_API_VERSION"]
-        os.environ["OPENAI_API_KEY"] = os.environ["OPENAI_API_KEY"]
+        OPENAI_API_TYPE = os.getenv("OPENAI_API_TYPE")
+        OPENAI_API_BASE = os.getenv("OPENAI_API_BASE")
+        OPENAI_API_VERSION = os.getenv("OPENAI_API_VERSION")
+        OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
     def create_directory(self, directory_path: str):
         """
