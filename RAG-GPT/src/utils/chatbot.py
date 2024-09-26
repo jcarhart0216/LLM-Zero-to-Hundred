@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 
 # os.makedirs('/Users/jcarhart/Desktop/code_personal_use/LLM-Zero-to-Hundred/RAG-GPT/data/vectordb/uploaded/chroma', exist_ok=True)
 
-load_dotenv()  # This will load the .env file
+load_dotenv(".env")  # This will load the .env file
 
 client = OpenAI()
 #     # This is the default and can be omitted
